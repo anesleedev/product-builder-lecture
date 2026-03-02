@@ -109,3 +109,32 @@ themeToggle.addEventListener('click', () => {
     localStorage.setItem('theme', next);
     themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
 });
+
+// 제휴문의 폼 제출
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '전송 중...';
+
+    const response = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.ok) {
+        formStatus.textContent = '문의가 성공적으로 전송되었습니다!';
+        formStatus.style.color = '#28a745';
+        contactForm.reset();
+    } else {
+        formStatus.textContent = '전송에 실패했습니다. 다시 시도해주세요.';
+        formStatus.style.color = '#dc3545';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = '문의 보내기';
+});
