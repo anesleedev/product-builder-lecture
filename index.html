@@ -19,10 +19,15 @@
 
     <div id="animal-test">
         <h2>나의 동물상은?</h2>
-        <p class="animal-desc">카메라로 얼굴을 비춰보세요!</p>
-        <div id="webcam-container"></div>
+        <p class="animal-desc">카메라 또는 사진 업로드로 테스트해보세요!</p>
+        <div id="preview-container">
+            <div id="webcam-container"></div>
+            <img id="upload-preview" style="display:none;" />
+        </div>
         <div id="animal-buttons">
-            <button id="start-btn" onclick="initWebcam()">카메라 시작</button>
+            <button id="camera-btn" onclick="initWebcam()">카메라로 찍기</button>
+            <label id="upload-btn" for="file-input">사진 업로드</label>
+            <input type="file" id="file-input" accept="image/*" onchange="handleUpload(event)" style="display:none;">
             <button id="capture-btn" onclick="capture()" style="display:none;">촬영하기</button>
             <button id="retry-btn" onclick="retry()" style="display:none;">다시하기</button>
         </div>

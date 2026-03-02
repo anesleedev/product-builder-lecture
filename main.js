@@ -113,23 +113,39 @@ themeToggle.addEventListener('click', () => {
 // 동물상 테스트
 const MODEL_URL = 'https://teachablemachine.withgoogle.com/models/dhB-RSOe3/';
 let model, webcam, animationId;
+let currentMode = null; // 'camera' or 'upload'
 
-async function initWebcam() {
-    const startBtn = document.getElementById('start-btn');
-    startBtn.textContent = '로딩 중...';
-    startBtn.disabled = true;
-
+async function loadModel() {
+    if (model) return;
     const modelURL = MODEL_URL + 'model.json';
     const metadataURL = MODEL_URL + 'metadata.json';
     model = await tmImage.load(modelURL, metadataURL);
+}
+
+function hideInitButtons() {
+    document.getElementById('camera-btn').style.display = 'none';
+    document.getElementById('upload-btn').style.display = 'none';
+}
+
+async function initWebcam() {
+    const cameraBtn = document.getElementById('camera-btn');
+    cameraBtn.textContent = '로딩 중...';
+    cameraBtn.disabled = true;
+    currentMode = 'camera';
+
+    await loadModel();
+
+    document.getElementById('upload-preview').style.display = 'none';
 
     const flip = true;
     webcam = new tmImage.Webcam(300, 300, flip);
     await webcam.setup();
     await webcam.play();
 
+    document.getElementById('webcam-container').innerHTML = '';
     document.getElementById('webcam-container').appendChild(webcam.canvas);
-    startBtn.style.display = 'none';
+
+    hideInitButtons();
     document.getElementById('capture-btn').style.display = 'inline-block';
     document.getElementById('result-container').style.display = 'none';
 
@@ -139,6 +155,38 @@ async function initWebcam() {
 function loop() {
     webcam.update();
     animationId = window.requestAnimationFrame(loop);
+}
+
+async function handleUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    currentMode = 'upload';
+
+    const uploadBtn = document.getElementById('upload-btn');
+    uploadBtn.textContent = '분석 중...';
+
+    await loadModel();
+
+    // 웹캠이 있으면 정리
+    if (webcam) {
+        window.cancelAnimationFrame(animationId);
+        webcam.stop();
+        document.getElementById('webcam-container').innerHTML = '';
+    }
+
+    const img = document.getElementById('upload-preview');
+    img.src = URL.createObjectURL(file);
+    img.style.display = 'block';
+
+    img.onload = async () => {
+        const prediction = await model.predict(img);
+        const dogScore = prediction.find(p => p.className === 'dog').probability;
+        const catScore = prediction.find(p => p.className === 'cat').probability;
+
+        showResult(dogScore, catScore);
+        hideInitButtons();
+        document.getElementById('retry-btn').style.display = 'inline-block';
+    };
 }
 
 async function capture() {
@@ -196,10 +244,26 @@ async function retry() {
     document.getElementById('bar-dog').style.width = '0';
     document.getElementById('bar-cat').style.width = '0';
     document.getElementById('retry-btn').style.display = 'none';
-    document.getElementById('capture-btn').style.display = 'inline-block';
+    document.getElementById('capture-btn').style.display = 'none';
+    document.getElementById('upload-preview').style.display = 'none';
+    document.getElementById('file-input').value = '';
 
-    await webcam.play();
-    animationId = window.requestAnimationFrame(loop);
+    // 웹캠 정리
+    if (webcam) {
+        webcam.stop();
+        document.getElementById('webcam-container').innerHTML = '';
+        webcam = null;
+    }
+
+    // 초기 버튼 복원
+    const cameraBtn = document.getElementById('camera-btn');
+    cameraBtn.style.display = 'inline-block';
+    cameraBtn.textContent = '카메라로 찍기';
+    cameraBtn.disabled = false;
+    const uploadBtn = document.getElementById('upload-btn');
+    uploadBtn.style.display = 'inline-block';
+    uploadBtn.textContent = '사진 업로드';
+    currentMode = null;
 }
 
 // 제휴문의 폼 제출
