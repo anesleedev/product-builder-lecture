@@ -65,6 +65,146 @@ h1 {
     align-items: center;
 }
 
+/* 동물상 테스트 */
+#animal-test {
+    text-align: center;
+    background: var(--app-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px var(--shadow);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+#animal-test h2 {
+    color: var(--text-color);
+    margin: 0 0 0.5rem;
+    transition: color 0.3s;
+}
+
+.animal-desc {
+    color: var(--text-color);
+    opacity: 0.7;
+    margin: 0 0 1.2rem;
+    font-size: 0.9rem;
+}
+
+#webcam-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#webcam-container canvas {
+    border-radius: 10px;
+}
+
+#animal-buttons {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#animal-buttons button {
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#start-btn { background-color: #007bff; }
+#start-btn:hover { background-color: #0056b3; }
+#capture-btn { background-color: #28a745; }
+#capture-btn:hover { background-color: #1e7e34; }
+#retry-btn { background-color: #6c757d; }
+#retry-btn:hover { background-color: #545b62; }
+
+#result-container {
+    margin-top: 1.2rem;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#result-emoji {
+    font-size: 4rem;
+    margin-bottom: 0.3rem;
+}
+
+#result-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+#result-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.result-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bar-label {
+    color: var(--text-color);
+    font-size: 0.85rem;
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.bar-track {
+    flex: 1;
+    height: 20px;
+    background: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    width: 0;
+}
+
+.dog-bar { background: linear-gradient(90deg, #f6d365, #fda085); }
+.cat-bar { background: linear-gradient(90deg, #a18cd1, #fbc2eb); }
+
+.bar-pct {
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: bold;
+    width: 42px;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+#result-desc {
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
 /* 제휴문의 폼 */
 #contact {
     text-align: center;

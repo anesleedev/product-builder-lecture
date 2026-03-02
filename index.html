@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로또 번호 생성기</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -13,6 +15,34 @@
             <button id="theme-toggle" aria-label="테마 변경">🌙</button>
         </div>
         <lotto-display></lotto-display>
+    </div>
+
+    <div id="animal-test">
+        <h2>나의 동물상은?</h2>
+        <p class="animal-desc">카메라로 얼굴을 비춰보세요!</p>
+        <div id="webcam-container"></div>
+        <div id="animal-buttons">
+            <button id="start-btn" onclick="initWebcam()">카메라 시작</button>
+            <button id="capture-btn" onclick="capture()" style="display:none;">촬영하기</button>
+            <button id="retry-btn" onclick="retry()" style="display:none;">다시하기</button>
+        </div>
+        <div id="result-container" style="display:none;">
+            <div id="result-emoji"></div>
+            <div id="result-title"></div>
+            <div id="result-bar-container">
+                <div class="result-bar-row">
+                    <span class="bar-label">강아지상</span>
+                    <div class="bar-track"><div id="bar-dog" class="bar-fill dog-bar"></div></div>
+                    <span id="pct-dog" class="bar-pct"></span>
+                </div>
+                <div class="result-bar-row">
+                    <span class="bar-label">고양이상</span>
+                    <div class="bar-track"><div id="bar-cat" class="bar-fill cat-bar"></div></div>
+                    <span id="pct-cat" class="bar-pct"></span>
+                </div>
+            </div>
+            <p id="result-desc"></p>
+        </div>
     </div>
 
     <div id="contact">

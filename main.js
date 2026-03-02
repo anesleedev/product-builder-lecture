@@ -110,6 +110,98 @@ themeToggle.addEventListener('click', () => {
     themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
 });
 
+// 동물상 테스트
+const MODEL_URL = 'https://teachablemachine.withgoogle.com/models/dhB-RSOe3/';
+let model, webcam, animationId;
+
+async function initWebcam() {
+    const startBtn = document.getElementById('start-btn');
+    startBtn.textContent = '로딩 중...';
+    startBtn.disabled = true;
+
+    const modelURL = MODEL_URL + 'model.json';
+    const metadataURL = MODEL_URL + 'metadata.json';
+    model = await tmImage.load(modelURL, metadataURL);
+
+    const flip = true;
+    webcam = new tmImage.Webcam(300, 300, flip);
+    await webcam.setup();
+    await webcam.play();
+
+    document.getElementById('webcam-container').appendChild(webcam.canvas);
+    startBtn.style.display = 'none';
+    document.getElementById('capture-btn').style.display = 'inline-block';
+    document.getElementById('result-container').style.display = 'none';
+
+    animationId = window.requestAnimationFrame(loop);
+}
+
+function loop() {
+    webcam.update();
+    animationId = window.requestAnimationFrame(loop);
+}
+
+async function capture() {
+    window.cancelAnimationFrame(animationId);
+    webcam.update();
+    const prediction = await model.predict(webcam.canvas);
+    webcam.pause();
+
+    const dogScore = prediction.find(p => p.className === 'dog').probability;
+    const catScore = prediction.find(p => p.className === 'cat').probability;
+
+    showResult(dogScore, catScore);
+
+    document.getElementById('capture-btn').style.display = 'none';
+    document.getElementById('retry-btn').style.display = 'inline-block';
+}
+
+function showResult(dogScore, catScore) {
+    const container = document.getElementById('result-container');
+    container.style.display = 'block';
+
+    const isDog = dogScore > catScore;
+    document.getElementById('result-emoji').textContent = isDog ? '🐶' : '🐱';
+    document.getElementById('result-title').textContent = isDog ? '강아지상' : '고양이상';
+
+    const dogPct = Math.round(dogScore * 100);
+    const catPct = Math.round(catScore * 100);
+
+    document.getElementById('pct-dog').textContent = dogPct + '%';
+    document.getElementById('pct-cat').textContent = catPct + '%';
+
+    setTimeout(() => {
+        document.getElementById('bar-dog').style.width = dogPct + '%';
+        document.getElementById('bar-cat').style.width = catPct + '%';
+    }, 50);
+
+    const descriptions = isDog
+        ? [
+            '충성스럽고 다정한 성격! 친구들에게 항상 먼저 다가가는 타입이에요.',
+            '밝고 에너지 넘치는 당신! 주변 사람들을 행복하게 만드는 매력이 있어요.',
+            '순수하고 솔직한 매력의 소유자! 거짓말을 못하는 타입이죠.'
+          ]
+        : [
+            '독립적이고 도도한 매력! 혼자만의 시간을 즐길 줄 아는 타입이에요.',
+            '신비로운 분위기의 소유자! 알 수 없는 매력으로 사람들을 끌어당겨요.',
+            '깔끔하고 센스있는 당신! 자기만의 확고한 취향이 있어요.'
+          ];
+
+    const desc = descriptions[Math.floor(Math.random() * descriptions.length)];
+    document.getElementById('result-desc').textContent = desc;
+}
+
+async function retry() {
+    document.getElementById('result-container').style.display = 'none';
+    document.getElementById('bar-dog').style.width = '0';
+    document.getElementById('bar-cat').style.width = '0';
+    document.getElementById('retry-btn').style.display = 'none';
+    document.getElementById('capture-btn').style.display = 'inline-block';
+
+    await webcam.play();
+    animationId = window.requestAnimationFrame(loop);
+}
+
 // 제휴문의 폼 제출
 const contactForm = document.getElementById('contact-form');
 const formStatus = document.getElementById('form-status');
