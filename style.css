@@ -131,3 +131,22 @@ h1 {
     font-size: 0.9rem;
     color: var(--text-color);
 }
+
+/* 댓글 섹션 */
+#comments {
+    text-align: center;
+    background: var(--app-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px var(--shadow);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+#comments h2 {
+    color: var(--text-color);
+    margin: 0 0 1.2rem;
+    transition: color 0.3s;
+}
